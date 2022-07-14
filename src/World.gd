@@ -3,7 +3,7 @@ extends Node
 const _Chunk = preload("res://scenes/Chunk.tscn")
 onready var noise = OpenSimplexNoise.new()
 
-var __
+
 var player_pos
 var last_player_pos = Vector2.ZERO
 
@@ -27,15 +27,7 @@ func _ready():
 	noise.octaves = 3.0
 	noise.persistence = 0.8
 
-	__ = Events.connect("player_move", self, "on_player_move")
-
-	var _timer = Timer.new()
-	add_child(_timer)
-
-	_timer.connect("timeout", self, "_on_Timer_timeout")
-	_timer.set_wait_time(1.0)
-	_timer.set_one_shot(false)  # Make sure it loops
-	_timer.start()
+	Events.connect("player_move", self, "on_player_move")
 
 
 func add_chunk(x, y):
@@ -80,11 +72,6 @@ func create_chunk(x, y):
 	current_chunk = new_chunk
 	return new_chunk
 
-
-func _on_Timer_timeout():
-	for key in chunks:
-		var chunk = chunks[key]
-		chunk.world_update()
 
 
 func on_player_move(_position):

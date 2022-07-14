@@ -54,7 +54,3 @@ func clear_chunk():
 	# node.queue_free()
 
 
-func world_update():
-	pass
-	# for water in water_tiles:
-	# 	water.change_opacity()

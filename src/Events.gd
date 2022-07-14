@@ -1,4 +1,6 @@
 extends Node
 
-# Player Signals
+##
+# Global Signals
+##
 signal player_move(position)

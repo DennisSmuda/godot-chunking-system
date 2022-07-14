@@ -6,7 +6,6 @@ var new_body_velocity: Vector2 = Vector2(0, 0)
 var direction_vector := Vector2(0, 0)
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	Events.emit_signal("player_move", global_position)
 
