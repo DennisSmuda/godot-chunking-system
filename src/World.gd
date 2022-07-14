@@ -3,7 +3,6 @@ extends Node
 const _Chunk = preload("res://scenes/Chunk.tscn")
 onready var noise = OpenSimplexNoise.new()
 
-
 var player_pos
 var last_player_pos = Vector2.ZERO
 
@@ -11,7 +10,6 @@ var chunk_size := 16.0
 
 var chunks := {}
 var unready_chunks = {}
-var chunks_to_delete = []
 var current_chunk = null
 var chunk_radius = 2
 
@@ -73,7 +71,6 @@ func create_chunk(x, y):
 	return new_chunk
 
 
-
 func on_player_move(_position):
 	player_pos = _position
 	if not last_player_pos:
@@ -96,7 +93,6 @@ func update_player_pos():
 	reset_chunks()
 	update_chunks()
 	clean_up_chunks()
-	delete_chunks()
 
 
 func update_chunks():
@@ -144,9 +140,6 @@ func free_chunk(arg):
 	var _key = arg[1]
 	var _thread = arg[2]
 
-	# _chunk.visible = false
-	_chunk.clear_chunk()
-
 	print("Clear Chunk", _key)
 	call_deferred("kill_chunk", _chunk, _key, _thread)
 
@@ -156,17 +149,6 @@ func kill_chunk(_chunk, _key, _thread):
 	# _chunk.queue_free()
 	# if _chunk.get_child_count() == 0:
 	_chunk.visible = false
-	# _chunk.queue_free()
 	chunks.erase(_key)
 	_thread.wait_to_finish()
-
-
-func delete_chunks():
-	for key in chunks_to_delete:
-		var chunk = chunks[key]
-		if not chunk.visible:
-			print("DELETEE THTIS CHUNK!! ", key)
-			# if not thread.is_active():
-			# chunk.queue_free()
-			# thread.start(self, "free_chunk", [chunk, key, thread])
-		# print("Loading New Chunk: ", str(x), ", ", str(y))
+	_chunk.queue_free()

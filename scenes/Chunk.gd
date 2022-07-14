@@ -41,16 +41,3 @@ func _ready():
 				new_water.position = Vector2(x * 16, y * 16)
 				add_child(new_water)
 				water_tiles.append(new_water)
-
-
-func clear_chunk():
-	# visible = false
-	pass
-	# for node in get_children():
-	# (node as StaticBody).dis
-	# pass
-	# node.visible = false
-	# remove_child(node)
-	# node.queue_free()
-
-
