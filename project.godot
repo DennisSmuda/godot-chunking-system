@@ -20,8 +20,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Events="*res://src/Events.gd"
 GameWorld="*res://src/World.gd"
+Events="*res://src/Events.gd"
 
 [display]
 

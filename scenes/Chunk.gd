@@ -1,6 +1,6 @@
 extends Node2D
 
-const _Water = preload("res://scenes/tiles/Water.tscn")  # TODO: Fixshit
+const _Water = preload("res://scenes/tiles/Water.tscn")
 const _Grass = preload("res://scenes/tiles/Grass.tscn")
 
 var chunk_size := 32.0
@@ -17,7 +17,10 @@ var size_rect: Rect2
 var grid = []
 
 
-# Called when the node enters the scene tree for the first time.
+##
+# Initializes the whole 2d chunk and
+# spawns grass/water tiles based on noise value
+##
 func _ready():
 	size_rect = Rect2(
 		Vector2(chunk_x * 16, (chunk_y - chunk_size / 2) * 16),
@@ -27,7 +30,6 @@ func _ready():
 	for x in range(chunk_x, chunk_x + chunk_size):
 		for y in range(chunk_y, chunk_y + chunk_size):
 			var value = noise.get_noise_2d(x, y)
-			# print("Value: ", value)
 			if value > 0.39:
 				var new_grass = _Grass.instance()
 				new_grass.position = Vector2(x * 16, y * 16)

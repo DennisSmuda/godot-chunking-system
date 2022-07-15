@@ -14,26 +14,36 @@ var current_chunk = null
 var chunk_radius = 2
 
 var thread
-
+var kill_thread
+var timer
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	thread = Thread.new()
+	kill_thread = Thread.new()
 	randomize()
 	noise.seed = randi()
 	noise.period = 32.0
 	noise.octaves = 3.0
 	noise.persistence = 0.8
+	print("World INIT!", Events)
 
 	Events.connect("player_move", self, "on_player_move")
+	
+	timer = Timer.new()
+	timer.connect("timeout",self,"update_timer")
+	timer.set_wait_time(0.125)
+	add_child(timer)
+	timer.start()
 
-
+##
+# Add a chunk 
+##
 func add_chunk(x, y):
-	# print("Adding Chunk: ", x, ",", y)
 	var key = str(x) + "," + str(y)
-	if chunks.has(key) or unready_chunks.has(key):
-		# print("Chunk already exists")
-		return
+	
+	# return if chunk exists
+	if chunks.has(key) or unready_chunks.has(key): return
 
 	if not thread.is_active():
 		# print("Loading New Chunk: ", str(x), ", ", str(y))
@@ -66,13 +76,12 @@ func create_chunk(x, y):
 	new_chunk.chunk_size = chunk_size
 	new_chunk.chunk_x = x
 	new_chunk.chunk_y = y
-	chunks[str(x) + "," + str(y)] = new_chunk
-	current_chunk = new_chunk
 	return new_chunk
 
 
 func on_player_move(_position):
 	player_pos = _position
+	
 	if not last_player_pos:
 		last_player_pos = player_pos
 		update_player_pos()
@@ -82,20 +91,21 @@ func on_player_move(_position):
 		update_player_pos()
 
 
-func _process(_delta):
-	reset_chunks()
-	update_chunks()
+# can also be in update -> watch for performance
+func update_timer():
+	set_all_chunks_to_remove()
+	determine_chunks_to_keep()
 	clean_up_chunks()
-
 
 func update_player_pos():
-	print("Update Map")
-	reset_chunks()
-	update_chunks()
-	clean_up_chunks()
+	set_all_chunks_to_remove()
+	determine_chunks_to_keep()
+	#clean_up_chunks()
 
 
-func update_chunks():
+func determine_chunks_to_keep():
+	if not player_pos:
+		return
 	var p_x = floor(player_pos.x / 16 / chunk_size)
 	var p_y = floor(player_pos.y / 16 / chunk_size)
 
@@ -115,23 +125,19 @@ func get_chunk(x, y):
 	return null
 
 
-func reset_chunks():
+func set_all_chunks_to_remove():
 	for key in chunks:
 		chunks[key].should_remove = true
-		pass
 
 
+# Look for a chunk to remove and start a thread to free it
 func clean_up_chunks():
 	for key in chunks:
 		var chunk = chunks[key]
 		if chunk.should_remove:
-			#print("Killing Chunk", key)
-			if not thread.is_active():
-				thread.start(self, "free_chunk", [chunk, key, thread])
-		# print("Loading New Chunk: ", str(x), ", ", str(y))
-
-		# chunk.queue_free()
-		#chunks.erase(key)
+			if not kill_thread.is_active():
+				chunk.visible = false
+				kill_thread.start(self, "free_chunk", [chunk, key, kill_thread])
 
 
 func free_chunk(arg):
@@ -140,15 +146,12 @@ func free_chunk(arg):
 	var _key = arg[1]
 	var _thread = arg[2]
 
-	print("Clear Chunk", _key)
 	call_deferred("kill_chunk", _chunk, _key, _thread)
 
 
 func kill_chunk(_chunk, _key, _thread):
 	print("kIllChunk: ", _chunk.get_child_count())
-	# _chunk.queue_free()
-	# if _chunk.get_child_count() == 0:
-	_chunk.visible = false
+	#_chunk.visible = false
 	chunks.erase(_key)
 	_thread.wait_to_finish()
 	_chunk.queue_free()

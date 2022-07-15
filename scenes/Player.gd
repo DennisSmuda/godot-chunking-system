@@ -8,6 +8,8 @@ var direction_vector := Vector2(0, 0)
 
 func _ready():
 	Events.emit_signal("player_move", global_position)
+	
+	print("Player INIT!", Events)
 
 
 func _input(_event):
