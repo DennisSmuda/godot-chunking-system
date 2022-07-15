@@ -1,27 +1,28 @@
 extends Node
 
 const _Chunk = preload("res://scenes/Chunk.tscn")
+
+var spawn_thread: Thread
+var kill_thread: Thread
+var update_timer: Timer
+
+var player_pos: Vector2
+var last_player_pos: Vector2 = Vector2.ZERO
+
+var chunk_size: int = 16
+
+var chunks: Dictionary = {}
+var unready_chunks: Dictionary = {}
+var chunk_radius: int = 2
+
 onready var noise = OpenSimplexNoise.new()
-
-var player_pos
-var last_player_pos = Vector2.ZERO
-
-var chunk_size := 16.0
-
-var chunks := {}
-var unready_chunks = {}
-var chunk_radius = 2
-
-var spawn_thread
-var kill_thread
-var update_timer
 
 
 ##
 # World.gd is a global script that loads/unloads chunks of tiles
 # depending on the player's position
 ##
-func _ready():
+func _ready() -> void:
 	spawn_thread = Thread.new()
 	kill_thread = Thread.new()
 
@@ -46,8 +47,8 @@ func _ready():
 ##
 # add a chunk at pos(x, y)
 ##
-func add_chunk(x, y):
-	var key = str(x) + "," + str(y)
+func add_chunk(x: int, y: int) -> void:
+	var key: String = str(x) + "," + str(y)
 
 	# return if chunk exists
 	if chunks.has(key) or unready_chunks.has(key):
@@ -55,22 +56,22 @@ func add_chunk(x, y):
 
 	# start loading a new chunk if a spawn_thread is available
 	if not spawn_thread.is_active():
-		spawn_thread.start(self, "load_chunk", [spawn_thread, x, y])
 		unready_chunks[key] = 1
+		spawn_thread.start(self, "load_chunk", [spawn_thread, x, y])
 
 
 # load a new chunk in a spawn_thread
-func load_chunk(arr):
-	var _thread = arr[0]
-	var x = arr[1]
-	var y = arr[2]
+func load_chunk(args: Array) -> void:
+	var _thread = args[0]
+	var x = args[1]
+	var y = args[2]
 
 	var new_chunk = create_chunk(x, y)
 
 	call_deferred("load_done", x, y, new_chunk, _thread)
 
 
-func load_done(x, y, chunk, _thread):
+func load_done(x: int, y: int, chunk: Chunk, _thread: Thread) -> void:
 	var key = str(x) + "," + str(y)
 	add_child(chunk)
 	chunks[key] = chunk
@@ -79,18 +80,18 @@ func load_done(x, y, chunk, _thread):
 
 
 # update player pos internal variable
-func on_player_move(_position):
+func on_player_move(_position: Vector2) -> void:
 	player_pos = _position
 
 
 # can also be in update -> watch for performance
-func _on_update_timer_timeout():
+func _on_update_timer_timeout() -> void:
 	set_all_chunks_to_remove()
 	determine_chunks_to_keep()
 	clean_up_chunks()
 
 
-func determine_chunks_to_keep():
+func determine_chunks_to_keep() -> void:
 	if not player_pos:
 		return
 	var p_x = floor(player_pos.x / 16 / chunk_size)
@@ -105,7 +106,7 @@ func determine_chunks_to_keep():
 
 
 # Look for a chunk to remove and start a kill_thread to free it
-func clean_up_chunks():
+func clean_up_chunks() -> void:
 	for key in chunks:
 		var chunk = chunks[key]
 		if chunk.should_remove:
@@ -115,7 +116,7 @@ func clean_up_chunks():
 
 
 # free chunk inside a thread
-func free_chunk(args):
+func free_chunk(args) -> void:
 	var _chunk = args[0]
 	var _key = args[1]
 	var _thread = args[2]
@@ -127,12 +128,12 @@ func free_chunk(args):
 
 
 # thread wait to finish function -> if some work needs to happen after chunk deletion
-func on_free_chunk(_chunk, _key, _thread):
+func on_free_chunk(_chunk: Chunk, _key: String, _thread: Thread) -> void:
 	_thread.wait_to_finish()
 
 
 # create chunk at x,y position
-func create_chunk(x, y):
+func create_chunk(x, y) -> Chunk:
 	var new_chunk = _Chunk.instance()
 	new_chunk.noise = noise
 	new_chunk.chunk_size = chunk_size
@@ -142,7 +143,7 @@ func create_chunk(x, y):
 
 
 # get chunk at x,y position
-func get_chunk(x, y):
+func get_chunk(x, y) -> Chunk:
 	var key = str(x) + "," + str(y)
 	if chunks.has(key):
 		return chunks.get(key)
@@ -151,6 +152,6 @@ func get_chunk(x, y):
 
 
 # set all chunks to should_remove=true
-func set_all_chunks_to_remove():
+func set_all_chunks_to_remove() -> void:
 	for key in chunks:
 		chunks[key].should_remove = true

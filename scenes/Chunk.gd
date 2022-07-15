@@ -1,27 +1,27 @@
+class_name Chunk
 extends Node2D
 
 const _Water = preload("res://scenes/tiles/Water.tscn")
+const _Sand = preload("res://scenes/tiles/Sand.tscn")
 const _Grass = preload("res://scenes/tiles/Grass.tscn")
 
-var chunk_size := 32.0
-var noise = null
+var chunk_size: float = 32.0
+var noise: OpenSimplexNoise = null
 
-var chunk_x = 0
-var chunk_y = 0
-
-var should_remove := false
-
-var water_tiles := []
+var chunk_x: int = 0
+var chunk_y: int = 0
 
 var size_rect: Rect2
-var grid = []
+var grid: Array = []
+
+var should_remove := false
 
 
 ##
 # Initializes the whole 2d chunk and
 # spawns grass/water tiles based on noise value
 ##
-func _ready():
+func _ready() -> void:
 	size_rect = Rect2(
 		Vector2(chunk_x * 16, (chunk_y - chunk_size / 2) * 16),
 		Vector2(chunk_size * 16, chunk_size * 16)
@@ -35,11 +35,12 @@ func _ready():
 				new_grass.position = Vector2(x * 16, y * 16)
 				add_child(new_grass)
 			elif value > 0.33:
-				var new_sand = _Grass.instance()  # TODO: Make Sand
+				var new_sand = _Sand.instance()
 				new_sand.position = Vector2(x * 16, y * 16)
 				add_child(new_sand)
-			else:
-				var new_water = _Water.instance()
-				new_water.position = Vector2(x * 16, y * 16)
-				add_child(new_water)
-				water_tiles.append(new_water)
+
+			### little heavy on performance, should probably use tilemaps instead to display more sprites at once
+			# else:
+			# 	var new_water = _Water.instance()
+			# 	new_water.position = Vector2(x * 16, y * 16)
+			# 	add_child(new_water)
