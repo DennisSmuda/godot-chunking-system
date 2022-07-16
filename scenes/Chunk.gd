@@ -11,9 +11,6 @@ var noise: OpenSimplexNoise = null
 var chunk_x: int = 0
 var chunk_y: int = 0
 
-var size_rect: Rect2
-var grid: Array = []
-
 var should_remove := false
 
 
@@ -22,11 +19,6 @@ var should_remove := false
 # spawns grass/water tiles based on noise value
 ##
 func _ready() -> void:
-	size_rect = Rect2(
-		Vector2(chunk_x * 16, (chunk_y - chunk_size / 2) * 16),
-		Vector2(chunk_size * 16, chunk_size * 16)
-	)
-
 	for x in range(chunk_x, chunk_x + chunk_size):
 		for y in range(chunk_y, chunk_y + chunk_size):
 			var value = noise.get_noise_2d(x, y)
