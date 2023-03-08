@@ -31,12 +31,7 @@ func _ready() -> void:
 	noise.seed = randi()
 	noise.fractal_octaves = 3
 
-	#noise.period = 32.0
-	#noise.octaves = 3.0
-	#noise.persistence = 0.8
-
 	# connect to player_move event
-	#Events.connect("player_move", self, "on_player_move")
 	Events.player_move.connect(on_player_move)
 
 	# update update_timer
@@ -44,7 +39,7 @@ func _ready() -> void:
 	update_timer.timeout.connect(_on_update_timer_timeout)
 	update_timer.set_wait_time(0.125)
 	add_child(update_timer)
-	#update_timer.start()
+	update_timer.start()
 
 
 ##
@@ -66,19 +61,16 @@ func add_chunk(x: int, y: int) -> void:
 
 # load a new chunk in a spawn_thread
 func load_chunk(args: Array) -> void:
-	print("Load Chunk")
 	var _thread = args[0]
 	var x = args[1]
 	var y = args[2]
 
 	var new_chunk = create_chunk(x, y)
-	print("New chunk", new_chunk)
 	call_deferred("load_done", x, y, new_chunk, _thread)
 
 
 func load_done(x: int, y: int, chunk: Chunk, _thread: Thread) -> void:
 	var key = str(x) + "," + str(y)
-	print("Add chunk", chunk)
 	add_child(chunk)
 	chunks[key] = chunk
 	unready_chunks.erase(key)
@@ -87,14 +79,11 @@ func load_done(x: int, y: int, chunk: Chunk, _thread: Thread) -> void:
 
 # update player pos internal variable
 func on_player_move(_position: Vector2) -> void:
-	print("Player move", _position)
 	player_pos = _position
-	_on_update_timer_timeout()
 
 
 # can also be in update -> watch for performance
 func _on_update_timer_timeout() -> void:
-	print("Timer Update")
 	set_all_chunks_to_remove()
 	determine_chunks_to_keep()
 	clean_up_chunks()
@@ -133,12 +122,11 @@ func free_chunk(args) -> void:
 	chunks.erase(_key)
 	_chunk.queue_free()
 
-	#_thread.wait_to_finish()
-	call_deferred("on_free_chunk", _chunk, _key, _thread)
+	call_deferred("on_free_chunk", _thread)
 
 
 # thread wait to finish function -> if some work needs to happen after chunk deletion
-func on_free_chunk(_chunk: Chunk, _key: String, _thread: Thread) -> void:
+func on_free_chunk(_thread: Thread) -> void:
 	_thread.wait_to_finish()
 
 

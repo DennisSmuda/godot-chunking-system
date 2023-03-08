@@ -80,5 +80,6 @@ down={
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0.105882, 0.145098, 0.345098, 1)
 environment/default_clear_color=Color(0.113725, 0.145098, 0.333333, 1)
 environment/default_environment="res://default_env.tres"
