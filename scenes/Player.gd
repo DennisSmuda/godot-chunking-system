@@ -27,13 +27,7 @@ func _input(_event: InputEvent) -> void:
 
 # process
 func _physics_process(_delta: float) -> void:
-	new_body_velocity = Vector2(0, 0)
-
-	var body_velocity = linear_velocity
-	new_body_velocity += direction_vector * move_speed
-
-	var newVelocity = body_velocity.linear_interpolate(new_body_velocity, 0.15)
-	linear_velocity = newVelocity
+	linear_velocity = direction_vector * move_speed
 
 	if linear_velocity.length() > 0.5:
 		Events.emit_signal("player_move", global_position)
