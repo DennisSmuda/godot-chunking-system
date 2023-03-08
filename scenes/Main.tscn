@@ -1,25 +1,24 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://b3jtdrhsectjg"]
 
-[ext_resource path="res://scenes/Player.gd" type="Script" id=1]
-[ext_resource path="res://assets/chars/player.png" type="Texture" id=2]
-[ext_resource path="res://scenes/Camera2D.gd" type="Script" id=3]
+[ext_resource type="Script" path="res://scenes/Player.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bw448aw5thoc" path="res://assets/chars/player.png" id="2"]
+[ext_resource type="Script" path="res://scenes/Camera2D.gd" id="3"]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="CircleShape2D" id="1"]
 
 [node name="Main" type="Node2D"]
 
 [node name="Player" type="RigidBody2D" parent="."]
-position = Vector2( 1, 1 )
+position = Vector2(1, 1)
 gravity_scale = 0.0
-script = ExtResource( 1 )
+script = ExtResource("1")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
-current = true
-zoom = Vector2( 0.6, 0.6 )
-script = ExtResource( 3 )
+zoom = Vector2(0.6, 0.6)
+script = ExtResource("3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-shape = SubResource( 1 )
+shape = SubResource("1")
 
-[node name="Sprite" type="Sprite" parent="Player"]
-texture = ExtResource( 2 )
+[node name="Sprite" type="Sprite2D" parent="Player"]
+texture = ExtResource("2")

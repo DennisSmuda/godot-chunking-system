@@ -6,7 +6,7 @@ const _Sand = preload("res://scenes/tiles/Sand.tscn")
 const _Grass = preload("res://scenes/tiles/Grass.tscn")
 
 var chunk_size: float = 32.0
-var noise: OpenSimplexNoise = null
+var noise: FastNoiseLite = null
 
 var chunk_x: int = 0
 var chunk_y: int = 0
@@ -23,11 +23,11 @@ func _ready() -> void:
 		for y in range(chunk_y, chunk_y + chunk_size):
 			var value = noise.get_noise_2d(x, y)
 			if value > 0.39:
-				var new_grass = _Grass.instance()
+				var new_grass = _Grass.instantiate()
 				new_grass.position = Vector2(x * 16, y * 16)
 				add_child(new_grass)
 			elif value > 0.33:
-				var new_sand = _Sand.instance()
+				var new_sand = _Sand.instantiate()
 				new_sand.position = Vector2(x * 16, y * 16)
 				add_child(new_sand)
 
