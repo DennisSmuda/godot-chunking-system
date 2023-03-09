@@ -11,13 +11,12 @@ config_version=5
 [application]
 
 config/name="Chunking"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/tile_chunks_demo.tscn"
 config/features=PackedStringArray("4.0")
 config/icon="res://icon.png"
 
 [autoload]
 
-GameWorld="*res://src/World.gd"
 Events="*res://src/Events.gd"
 
 [debug]
@@ -26,6 +25,8 @@ gdscript/warnings/return_value_discarded=false
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/stretch/mode="2d"
 
 [importer_defaults]

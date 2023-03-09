@@ -1,4 +1,4 @@
-class_name Chunk
+class_name TileChunk
 extends Node2D
 
 const _Water = preload("res://scenes/tiles/Water.tscn")
@@ -12,7 +12,6 @@ var chunk_x: int = 0
 var chunk_y: int = 0
 
 var should_remove := false
-
 
 ##
 # Initializes the whole 2d chunk and

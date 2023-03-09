@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3jtdrhsectjg"]
+
+[ext_resource type="Script" path="res://scenes/TileWorld.gd" id="1_3adou"]
+[ext_resource type="PackedScene" uid="uid://bic7ajtgvxil2" path="res://scenes/player.tscn" id="2_rmq2g"]
+
+[node name="TileChunksDemo" type="Node2D"]
+
+[node name="TileWorld" type="Node2D" parent="."]
+script = ExtResource("1_3adou")
+
+[node name="Player" parent="." instance=ExtResource("2_rmq2g")]
